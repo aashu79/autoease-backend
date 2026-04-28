@@ -1,0 +1,6 @@
+@autoease_backend_HostAddress = http://localhost:5209
+
+GET {{autoease_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
