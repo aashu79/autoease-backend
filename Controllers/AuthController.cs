@@ -213,13 +213,14 @@ namespace autoease_backend.Controllers
             if (!result.Succeeded) return Unauthorized("Invalid credentials");
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "default_secret_key_needs_to_be_long_enough_for_sha256");
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "default_secret_key_needs_to_be_long_enough");
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                     new Claim(ClaimTypes.Role, user.Role),
                     new Claim(ClaimTypes.Name, user.Name)
