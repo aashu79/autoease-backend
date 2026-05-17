@@ -13,10 +13,13 @@ builder.Services.AddAuthorization();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Database connection
 builder.Services.AddDbContext<autoease_backend.Data.AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? ""));
 
-builder.Services.AddTransient<IEmailService, EmailService>();
+
+// Email service
+builder.Services.AddTransient<autoease_backend.Services.IEmailService, autoease_backend.Services.EmailService>();
 
 // ✅ Use full namespace since interfaces live inside the service files
 builder.Services.AddScoped<autoease_backend.Services.IPurchaseInvoiceService,
