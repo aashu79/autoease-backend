@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using autoease_backend.Data;
@@ -11,9 +12,11 @@ using autoease_backend.Data;
 namespace autoease_backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260428180616_SyncModelChanges")]
+    partial class SyncModelChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,7 +189,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Appointments", (string)null);
+                    b.ToTable("Appointments");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Invoice", b =>
@@ -234,7 +237,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("Invoices", (string)null);
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.InvoiceItem", b =>
@@ -260,7 +263,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("PartId");
 
-                    b.ToTable("InvoiceItems", (string)null);
+                    b.ToTable("InvoiceItems");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Part", b =>
@@ -304,7 +307,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("Parts", (string)null);
+                    b.ToTable("Parts");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.PartRequest", b =>
@@ -330,7 +333,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("PartRequests", (string)null);
+                    b.ToTable("PartRequests");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Review", b =>
@@ -355,7 +358,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.User", b =>
@@ -431,7 +434,6 @@ namespace autoease_backend.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("users", (string)null);
-                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Vehicle", b =>
@@ -457,7 +459,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Vehicles", (string)null);
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.VehicleUsageLog", b =>
@@ -490,7 +492,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleUsageLogs", (string)null);
+                    b.ToTable("VehicleUsageLogs");
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Vendor", b =>
@@ -511,7 +513,7 @@ namespace autoease_backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vendors", (string)null);
+                    b.ToTable("Vendors");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
