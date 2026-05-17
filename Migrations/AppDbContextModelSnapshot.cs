@@ -54,7 +54,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Invoice", b =>
@@ -102,7 +102,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.InvoiceItem", b =>
@@ -128,7 +128,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("PartId");
 
-                    b.ToTable("InvoiceItems");
+                    b.ToTable("InvoiceItems", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Part", b =>
@@ -172,7 +172,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("Parts");
+                    b.ToTable("Parts", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.PartRequest", b =>
@@ -198,7 +198,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("PartRequests");
+                    b.ToTable("PartRequests", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Review", b =>
@@ -223,7 +223,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.User", b =>
@@ -256,7 +256,7 @@ namespace autoease_backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Vehicle", b =>
@@ -282,7 +282,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Vehicles");
+                    b.ToTable("Vehicles", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.VehicleUsageLog", b =>
@@ -315,7 +315,7 @@ namespace autoease_backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleUsageLogs");
+                    b.ToTable("VehicleUsageLogs", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Vendor", b =>
@@ -336,7 +336,7 @@ namespace autoease_backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vendors");
+                    b.ToTable("Vendors", (string)null);
                 });
 
             modelBuilder.Entity("autoease_backend.Data.Models.Appointment", b =>
