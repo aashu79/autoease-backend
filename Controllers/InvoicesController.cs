@@ -43,7 +43,7 @@ namespace autoease_backend.Controllers
 
         public class CreateInvoiceDto
         {
-            public int VendorId { get; set; }
+            public int? VendorId { get; set; }
             public string Type { get; set; } = string.Empty;
             public DateTime DueDate { get; set; }
             public List<InvoiceItemDto> Items { get; set; } = new();
@@ -61,10 +61,13 @@ namespace autoease_backend.Controllers
         [Authorize(Roles = "Staff,Admin")]
         public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDto dto, [FromQuery] int customerId)
         {
-            var vendorExists = await _context.Vendors.AnyAsync(v => v.Id == dto.VendorId);
-            if (!vendorExists)
+            if (dto.VendorId.HasValue)
             {
-                return BadRequest("Vendor not found.");
+                var vendorExists = await _context.Vendors.AnyAsync(v => v.Id == dto.VendorId.Value);
+                if (!vendorExists)
+                {
+                    return BadRequest("Vendor not found.");
+                }
             }
 
             decimal totalAmount = dto.Items.Sum(i => i.Quantity * i.UnitPrice);

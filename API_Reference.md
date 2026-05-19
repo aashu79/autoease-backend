@@ -482,6 +482,42 @@ Base route: `api/reviews`
 }
 ```
 
+### GET `/api/reviews/my-reviews`
+
+- Auth: Bearer token with role `Customer`
+- Purpose: Fetch all reviews created by the logged-in customer
+- Success response:
+
+```json
+[
+  {
+    "id": 7,
+    "customerId": 12,
+    "rating": 5,
+    "comment": "Very good service and quick delivery.",
+    "customer": null
+  }
+]
+```
+
+### GET `/api/reviews/all`
+
+- Auth: Bearer token with role `Admin`
+- Purpose: Fetch all reviews in the system (admin view)
+- Success response:
+
+```json
+[
+  {
+    "id": 7,
+    "customerId": 12,
+    "rating": 5,
+    "comment": "Very good service and quick delivery.",
+    "customer": null
+  }
+]
+```
+
 ## VendorController
 
 Base route: `api/vendor`
@@ -1434,3 +1470,114 @@ Admin view response sample:
 - `GET /api/appointments/customer/`
 - Auth: Bearer token with role `Admin`
 - Purpose: view all appointments for all customers
+
+## Added on 2026-05-21
+
+### Admin Financial Reports
+
+- `GET /api/reports/financial/daily`
+- Auth: None (in current implementation)
+- Purpose: Generate daily financial report
+
+Example response:
+```json
+[
+  {
+    "date": "2026-05-20T00:00:00Z",
+    "totalSales": 5400.0,
+    "totalPurchases": 2500.0,
+    "netProfit": 2900.0
+  }
+]
+```
+
+- `GET /api/reports/financial/monthly`
+- Auth: None (in current implementation)
+- Purpose: Generate monthly financial report
+
+Example response:
+```json
+[
+  {
+    "year": 2026,
+    "month": 5,
+    "totalSales": 5400.0,
+    "totalPurchases": 2500.0,
+    "netProfit": 2900.0
+  }
+]
+```
+
+- `GET /api/reports/financial/yearly`
+- Auth: None (in current implementation)
+- Purpose: Generate yearly financial report
+
+Example response:
+```json
+[
+  {
+    "year": 2026,
+    "totalSales": 5400.0,
+    "totalPurchases": 2500.0,
+    "netProfit": 2900.0
+  }
+]
+```
+
+### Staff Customer Reports
+
+- `GET /api/reports/customers/regulars`
+- Auth: None (in current implementation)
+- Purpose: Generate report of regular customers (more than 3 invoices)
+
+Example response:
+```json
+[
+  {
+    "id": 12,
+    "name": "Aayush Sharma",
+    "email": "aayush@example.com",
+    "phoneNumber": "9812345678",
+    "invoiceCount": 4
+  }
+]
+```
+
+- `GET /api/reports/customers/high-spenders`
+- Auth: None (in current implementation)
+- Purpose: Generate report of highest spending customers
+
+Example response:
+```json
+[
+  {
+    "id": 15,
+    "name": "Nabin Karki",
+    "email": "nabin@example.com",
+    "phoneNumber": "9811111111",
+    "totalSpent": 5400.0
+  }
+]
+```
+
+- `GET /api/reports/customers/pending-credits`
+- Auth: None (in current implementation)
+- Purpose: Generate report of customers with pending credits (unpaid balances)
+
+Example response:
+```json
+[
+  {
+    "id": 15,
+    "name": "Nabin Karki",
+    "email": "nabin@example.com",
+    "phoneNumber": "9811111111",
+    "pendingAmount": 5400.0
+  }
+]
+```
+
+### System Background Notifications
+The system includes an automatic background service (`NotificationBackgroundService`) that runs once a day to:
+- Detect parts with `StockQuantity < 10` and email the admin about low stock.
+- Detect unpaid invoices where `PaymentStatus` is "Pending" or "Outstanding" and `InvoiceDate` is more than a month old, and send automated email reminders to those customers.

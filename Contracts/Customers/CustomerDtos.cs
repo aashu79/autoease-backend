@@ -47,7 +47,7 @@ namespace autoease_backend.Contracts.Customers
     public class InvoiceDto
     {
         public int Id { get; set; }
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         public string? VendorName { get; set; }
         public string Type { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }

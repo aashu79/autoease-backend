@@ -7,7 +7,7 @@ namespace autoease_backend.Data.Models
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         public string Type { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public decimal DiscountApplied { get; set; }
