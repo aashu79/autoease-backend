@@ -68,5 +68,31 @@ namespace autoease_backend.Controllers
 
             return Ok(appointments);
         }
+
+        [HttpGet("customer/")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCustomerAppointments()
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Vehicle)
+                .Include(a => a.Staff)
+                //.Where(a => a.CustomerId == customerId)
+                .OrderByDescending(a => a.ScheduledAt)
+                .Select(a => new
+                {
+                    a.Id,
+                    a.CustomerId,
+                    a.VehicleId,
+                    VehicleModel = a.Vehicle != null ? a.Vehicle.Model : null,
+                    VehiclePlateNumber = a.Vehicle != null ? a.Vehicle.PlateNumber : null,
+                    a.StaffId,
+                    StaffName = a.Staff != null ? a.Staff.Name : null,
+                    a.ScheduledAt,
+                    a.Status
+                })
+                .ToListAsync();
+
+            return Ok(appointments);
+        }
     }
 }

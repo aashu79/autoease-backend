@@ -3,6 +3,7 @@ using autoease_backend.Data;
 using autoease_backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace autoease_backend.Controllers
 {
@@ -11,10 +12,12 @@ namespace autoease_backend.Controllers
     public class StaffCustomersController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public StaffCustomersController(AppDbContext context)
+        public StaffCustomersController(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -30,7 +33,7 @@ namespace autoease_backend.Controllers
                 return Conflict($"A customer with email '{normalizedEmail}' already exists.");
             }
 
-            var phoneExists = await _context.Users.AnyAsync(u => u.Phone == normalizedPhone);
+            var phoneExists = await _context.Users.AnyAsync(u => u.PhoneNumber == normalizedPhone);
             if (phoneExists)
             {
                 return Conflict($"A customer with phone '{normalizedPhone}' already exists.");
@@ -44,22 +47,28 @@ namespace autoease_backend.Controllers
 
             var customer = new User
             {
-                Name = request.Name.Trim(),
+                UserName = normalizedEmail,
                 Email = normalizedEmail,
-                Password = request.Password,
-                Phone = normalizedPhone,
-                Role = "Customer",
-                Vehicles = new List<Vehicle>
-                {
-                    new Vehicle
-                    {
-                        Model = request.VehicleModel.Trim(),
-                        PlateNumber = normalizedPlate
-                    }
-                }
+                Name = request.Name.Trim(),
+                PhoneNumber = normalizedPhone,
+                Role = "Customer"
             };
 
-            _context.Users.Add(customer);
+            var createResult = await _userManager.CreateAsync(customer, request.Password);
+            if (!createResult.Succeeded)
+            {
+                return BadRequest(createResult.Errors);
+            }
+
+            // Create vehicle record linked to the newly created user
+            var vehicle = new Vehicle
+            {
+                Model = request.VehicleModel.Trim(),
+                PlateNumber = normalizedPlate,
+                CustomerId = customer.Id
+            };
+
+            _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetCustomerDetails), new { customerId = customer.Id }, await BuildCustomerDetailsAsync(customer.Id));
@@ -97,7 +106,7 @@ namespace autoease_backend.Controllers
                 customersQuery = customersQuery.Where(u => u.Id == customerId ||
                     u.Name.ToLower().Contains(term) ||
                     u.Email.ToLower().Contains(term) ||
-                    u.Phone.ToLower().Contains(term) ||
+                    (u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(term)) ||
                     u.Vehicles!.Any(v => v.PlateNumber.ToLower().Contains(term)));
             }
             else
@@ -105,7 +114,7 @@ namespace autoease_backend.Controllers
                 customersQuery = customersQuery.Where(u =>
                     u.Name.ToLower().Contains(term) ||
                     u.Email.ToLower().Contains(term) ||
-                    u.Phone.ToLower().Contains(term) ||
+                    (u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(term)) ||
                     u.Vehicles!.Any(v => v.PlateNumber.ToLower().Contains(term)));
             }
 
@@ -115,15 +124,15 @@ namespace autoease_backend.Controllers
                 Id = customer.Id,
                 Name = customer.Name,
                 Email = customer.Email,
-                Phone = customer.Phone,
+                Phone = customer.PhoneNumber ?? string.Empty,
                 Vehicles = customer.Vehicles?
-                    .Select(vehicle => new VehicleDto
+                    .Select(vehicle => new CustomerVehicleDto
                     {
                         Id = vehicle.Id,
                         Model = vehicle.Model,
                         PlateNumber = vehicle.PlateNumber
                     })
-                    .ToList() ?? new List<VehicleDto>()
+                    .ToList() ?? new List<CustomerVehicleDto>()
             })
             .ToList();
 
@@ -164,7 +173,6 @@ namespace autoease_backend.Controllers
             var invoices = await _context.Invoices
                 .AsNoTracking()
                 .Include(i => i.Vendor)
-                .Include(i => i.Staff)
                 .Where(i => i.CustomerId == customerId)
                 .OrderByDescending(i => i.InvoiceDate)
                 .Select(i => new InvoiceDto
@@ -172,8 +180,6 @@ namespace autoease_backend.Controllers
                     Id = i.Id,
                     VendorId = i.VendorId,
                     VendorName = i.Vendor != null ? i.Vendor.Name : null,
-                    StaffId = i.StaffId,
-                    StaffName = i.Staff != null ? i.Staff.Name : null,
                     Type = i.Type,
                     TotalAmount = i.TotalAmount,
                     DiscountApplied = i.DiscountApplied,
@@ -229,16 +235,16 @@ namespace autoease_backend.Controllers
                 Id = customer.Id,
                 Name = customer.Name,
                 Email = customer.Email,
-                Phone = customer.Phone,
+                Phone = customer.PhoneNumber ?? string.Empty,
                 Role = customer.Role,
                 Vehicles = customer.Vehicles?
-                    .Select(vehicle => new VehicleDto
+                    .Select(vehicle => new CustomerVehicleDto
                     {
                         Id = vehicle.Id,
                         Model = vehicle.Model,
                         PlateNumber = vehicle.PlateNumber
                     })
-                    .ToList() ?? new List<VehicleDto>(),
+                    .ToList() ?? new List<CustomerVehicleDto>(),
                 Appointments = appointments,
                 Invoices = invoices,
                 VehicleUsageLogs = vehicleUsageLogs,

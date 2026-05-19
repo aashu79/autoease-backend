@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using autoease_backend.Data.Models;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,8 +51,11 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Database connection (single registration)
 builder.Services.AddDbContext<autoease_backend.Data.AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? ""));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? "")
+           // Log pending-model-changes warning instead of letting it surface as an exception
+           .ConfigureWarnings(w => w.Log(RelationalEventId.PendingModelChangesWarning)));
 
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
@@ -116,7 +120,15 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var _dbContext = scope.ServiceProvider.GetRequiredService<autoease_backend.Data.AppDbContext>();
-    _dbContext.Database.Migrate();
+    try
+    {
+        _dbContext.Database.Migrate();
+    }
+    catch (InvalidOperationException ex)
+    {
+        // Do not crash the app here; surface a clear message so developer can run migrations manually.
+        Console.Error.WriteLine("EF Core detected pending model changes. Create and apply a new migration before updating the database. \nRun: 'dotnet ef migrations add <Name>' and 'dotnet ef database update'.\nDetails: " + ex.Message);
+    }
 }
 
 // Configure the HTTP request pipeline.
@@ -129,6 +141,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+// Use the named CORS policy that allows all origins, methods, and headers
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();

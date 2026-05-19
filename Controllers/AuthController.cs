@@ -111,44 +111,7 @@ namespace autoease_backend.Controllers
             if (result.Succeeded)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = Url.Action(nameof(VerifyEmail), "Auth", new { token, email = user.Email }, Request.Scheme);
-
-                string emailBody = $@"
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            body {{ font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }}
-                            .container {{ max-width: 600px; margin: 40px auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }}
-                            .header {{ text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eeeeee; }}
-                            .header h2 {{ color: #333333; margin: 0; }}
-                            .content {{ padding: 20px 0; color: #555555; line-height: 1.6; text-align: center; }}
-                            .btn {{ display: inline-block; padding: 12px 25px; margin: 20px 0; background-color: #4CAF50; color: #ffffff !important; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; transition: background-color 0.3s; }}
-                            .btn:hover {{ background-color: #45a049; }}
-                            .footer {{ text-align: center; font-size: 12px; color: #999999; padding-top: 20px; border-top: 1px solid #eeeeee; }}
-                            .link-text {{ font-size: 12px; color: #007bff; word-break: break-all; }}
-                        </style>
-                    </head>
-                    <body>
-                        <div class='container'>
-                            <div class='header'>
-                                <h2>Welcome to AutoEase!</h2>
-                            </div>
-                            <div class='content'>
-                                <p>Hi {user.Name},</p>
-                                <p>Your account has been created by an admin. Please confirm your email address to activate your account and get started.</p>
-                                <a href='{confirmationLink}' class='btn'>Confirm Email Address</a>
-                                <p>If the button doesn't work, copy and paste this link into your browser:</p>
-                                <p class='link-text'>{confirmationLink}</p>
-                            </div>
-                            <div class='footer'>
-                                <p>&copy; {DateTime.UtcNow.Year} AutoEase. All rights reserved.</p>
-                            </div>
-                        </div>
-                    </body>
-                    </html>";
-
-                await _emailService.SendEmailAsync(user.Email, "Confirm your account", emailBody);
+                await _userManager.ConfirmEmailAsync(user, token);
 
                 return Ok(new { message = "User registered successfully by admin." });
             }

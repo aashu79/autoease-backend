@@ -16,7 +16,5 @@ namespace autoease_backend.Data.Models
         public ICollection<PartRequest>? PartRequests { get; set; }
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<Invoice>? CustomerInvoices { get; set; }
-        public ICollection<Invoice>? StaffInvoices { get; set; }
-        public ICollection<Part>? RequestedParts { get; set; }
     }
 }

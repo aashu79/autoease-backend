@@ -66,8 +66,38 @@ namespace autoease_backend.Controllers
             try
             {
                 var invoices = await _context.Invoices
+                    .Include(i => i.Customer)
                     .Include(i => i.InvoiceItems)
                     .OrderByDescending(i => i.InvoiceDate)
+                    .Select(i => new
+                    {
+                        i.Id,
+                        i.CustomerId,
+                        Customer = i.Customer == null
+                            ? null
+                            : new
+                            {
+                                i.Customer.Id,
+                                i.Customer.Name,
+                                i.Customer.Email,
+                                PhoneNumber = i.Customer.PhoneNumber,
+                                i.Customer.Role
+                            },
+                        i.VendorId,
+                        i.Type,
+                        i.TotalAmount,
+                        i.DiscountApplied,
+                        i.PaymentStatus,
+                        i.InvoiceDate,
+                        i.DueDate,
+                        InvoiceItems = i.InvoiceItems.Select(item => new
+                        {
+                            item.Id,
+                            item.InvoiceId,
+                            item.PartId,
+                            item.Quantity
+                        })
+                    })
                     .ToListAsync();
                 return Ok(invoices);
             }
