@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using autoease_backend.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using autoease_backend.Models;
 
 namespace autoease_backend.Data
 {

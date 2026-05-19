@@ -1,6 +1,6 @@
 using System;
 
-namespace autoease_backend.Data.Models
+namespace autoease_backend.Models
 {
     public class Appointment
     {
@@ -16,3 +16,4 @@ namespace autoease_backend.Data.Models
         public Vehicle? Vehicle { get; set; }
     }
 }
+

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace autoease_backend.Data.Models
+namespace autoease_backend.Models
 {
     public class Invoice
     {
@@ -22,3 +22,4 @@ namespace autoease_backend.Data.Models
         public ICollection<InvoiceItem>? InvoiceItems { get; set; }
     }
 }
+

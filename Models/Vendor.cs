@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace autoease_backend.Data.Models
+namespace autoease_backend.Models
 {
     public class Vendor
     {
@@ -12,3 +12,4 @@ namespace autoease_backend.Data.Models
         public ICollection<Invoice>? Invoices { get; set; }
     }
 }
+

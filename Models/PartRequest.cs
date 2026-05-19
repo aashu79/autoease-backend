@@ -1,4 +1,4 @@
-namespace autoease_backend.Data.Models
+namespace autoease_backend.Models
 {
     public class PartRequest
     {
@@ -10,3 +10,4 @@ namespace autoease_backend.Data.Models
         public User? Customer { get; set; }
     }
 }
+

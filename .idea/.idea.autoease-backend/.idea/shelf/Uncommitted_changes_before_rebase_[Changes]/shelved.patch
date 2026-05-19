@@ -1,0 +1,49 @@
+Index: appsettings.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"Logging\": {\n    \"LogLevel\": {\n      \"Default\": \"Information\",\n      \"Microsoft.AspNetCore\": \"Warning\"\n    }\n  },\n  \"AllowedHosts\": \"*\"\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/appsettings.json b/appsettings.json
+--- a/appsettings.json	(revision d95edd3d426308b88192eab9008d39390067348a)
++++ b/appsettings.json	(date 1777619039269)
+@@ -5,5 +5,14 @@
+       "Microsoft.AspNetCore": "Warning"
+     }
+   },
+-  "AllowedHosts": "*"
++  "AllowedHosts": "*",
++  "ConnectionStrings": {
++    "DefaultConnection": "Host=localhost;Port=5432;Database=autoease_db;Username=postgres;Password=0126"
++  },
++  "SmtpSettings": {
++    "Host": "smtp.gmail.com",
++    "Port": "587",
++    "Username": "anushreegami01@gmail.com",
++    "Password": "qmtn kafm syir jepb"
++  }
+ }
+\ No newline at end of file
+Index: Program.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.EntityFrameworkCore;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// Add services to the container.\n// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi\nbuilder.Services.AddOpenApi();\n\nbuilder.Services.AddDbContext<autoease_backend.Data.AppDbContext>(options =>\n    options.UseNpgsql(builder.Configuration.GetConnectionString(\"DefaultConnection\") ?? \"\"));\n\nbuilder.Services.AddTransient<autoease_backend.Services.IEmailService, autoease_backend.Services.EmailService>();\n\nvar app = builder.Build();\n\n// Configure the HTTP request pipeline.\nif (app.Environment.IsDevelopment())\n{\n    app.MapOpenApi();\n}\n\napp.UseHttpsRedirection();\n\napp.UseAuthorization();\n\napp.MapControllers();\n\napp.Run();\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Program.cs b/Program.cs
+--- a/Program.cs	(revision d95edd3d426308b88192eab9008d39390067348a)
++++ b/Program.cs	(date 1777618627445)
+@@ -2,6 +2,11 @@
+ 
+ var builder = WebApplication.CreateBuilder(args);
+ 
++builder.Services.AddControllers(); //  REQUIRED for MapControllers()
++
++builder.Services.AddAuthorization(); // REQUIRED for UseAuthorization()
++
++
+ // Add services to the container.
+ // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+ builder.Services.AddOpenApi();

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace autoease_backend.Data.Models
+namespace autoease_backend.Models
 {
     public class User
     {
@@ -23,3 +23,4 @@ namespace autoease_backend.Data.Models
         public ICollection<Part>? RequestedParts { get; set; }
     }
 }
+
