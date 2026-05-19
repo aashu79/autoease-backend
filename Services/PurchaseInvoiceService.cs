@@ -16,9 +16,6 @@ namespace autoease_backend.Services
 
         public async Task<Invoice> CreatePurchaseInvoiceAsync(Invoice invoice)
         {
-            // Workaround: Database requires CustomerId, but this is a purchase invoice.
-            // Using StaffId as CustomerId to satisfy the constraint without changing the data models.
-            invoice.CustomerId = invoice.StaffId;
             invoice.Type = "Purchase";
             invoice.InvoiceDate = DateTime.UtcNow;
             

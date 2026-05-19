@@ -25,12 +25,9 @@ namespace autoease_backend.Controllers
                 {
                     p.Id,
                     p.VendorId,
-                    p.RequestedBy,
                     p.Name,
                     p.UnitPrice,
-                    p.StockQuantity,
-                    p.RequestStatus,
-                    p.RequestDescription
+                    p.StockQuantity
                 })
                 .ToListAsync();
 
@@ -47,12 +44,9 @@ namespace autoease_backend.Controllers
                 {
                     p.Id,
                     p.VendorId,
-                    p.RequestedBy,
                     p.Name,
                     p.UnitPrice,
-                    p.StockQuantity,
-                    p.RequestStatus,
-                    p.RequestDescription
+                    p.StockQuantity
                 })
                 .FirstOrDefaultAsync();
 
@@ -100,12 +94,9 @@ namespace autoease_backend.Controllers
                 return BadRequest("Stock quantity cannot be negative.");
 
             existingPart.VendorId = updatedPart.VendorId;
-            existingPart.RequestedBy = updatedPart.RequestedBy;
             existingPart.Name = updatedPart.Name;
             existingPart.UnitPrice = updatedPart.UnitPrice;
             existingPart.StockQuantity = updatedPart.StockQuantity;
-            existingPart.RequestStatus = updatedPart.RequestStatus;
-            existingPart.RequestDescription = updatedPart.RequestDescription;
 
             await _context.SaveChangesAsync();
 

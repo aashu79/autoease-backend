@@ -46,5 +46,26 @@ namespace autoease_backend.Controllers
 
             return Ok(pr);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllRequests()
+        {
+            var requests = await _context.PartRequests
+                .Include(r => r.Customer)
+                .OrderByDescending(r => r.Id)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.PartName,
+                    r.Status,
+                    r.CustomerId,
+                    CustomerName = r.Customer != null ? r.Customer.Name : null,
+                    CustomerEmail = r.Customer != null ? r.Customer.Email : null
+                })
+                .ToListAsync();
+
+            return Ok(requests);
+        }
     }
 }

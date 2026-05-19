@@ -16,9 +16,6 @@ namespace autoease_backend.Services
 
         public async Task<Invoice> CreateSalesInvoiceAsync(Invoice invoice)
         {
-            // Workaround: Database requires VendorId, but this is a sales invoice.
-            if (invoice.VendorId == 0) invoice.VendorId = 1;
-            
             invoice.Type = "Sales";
             invoice.InvoiceDate = DateTime.UtcNow;
 
@@ -48,6 +45,7 @@ namespace autoease_backend.Services
             }
             
             await _context.SaveChangesAsync();
+
             return invoice;
         }
     }

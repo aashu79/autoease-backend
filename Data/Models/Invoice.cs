@@ -7,8 +7,7 @@ namespace autoease_backend.Data.Models
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
-        public int VendorId { get; set; }
-        public int StaffId { get; set; }
+        public int? VendorId { get; set; }
         public string Type { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public decimal DiscountApplied { get; set; }
@@ -18,7 +17,6 @@ namespace autoease_backend.Data.Models
 
         public User? Customer { get; set; }
         public Vendor? Vendor { get; set; }
-        public User? Staff { get; set; }
         public ICollection<InvoiceItem>? InvoiceItems { get; set; }
     }
 }

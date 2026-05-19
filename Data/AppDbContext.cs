@@ -46,12 +46,6 @@ namespace autoease_backend.Data
                 .HasForeignKey(i => i.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Invoice>()
-                .HasOne(i => i.Staff)
-                .WithMany(u => u.StaffInvoices)
-                .HasForeignKey(i => i.StaffId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<VehicleUsageLog>()
                 .HasOne(v => v.Customer)
                 .WithMany(u => u.VehicleUsageLogs)

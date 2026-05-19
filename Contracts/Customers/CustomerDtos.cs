@@ -25,7 +25,7 @@ namespace autoease_backend.Contracts.Customers
         public string PlateNumber { get; set; } = string.Empty;
     }
 
-    public class VehicleDto
+    public class CustomerVehicleDto
     {
         public int Id { get; set; }
         public string Model { get; set; } = string.Empty;
@@ -47,10 +47,8 @@ namespace autoease_backend.Contracts.Customers
     public class InvoiceDto
     {
         public int Id { get; set; }
-        public int VendorId { get; set; }
+        public int? VendorId { get; set; }
         public string? VendorName { get; set; }
-        public int StaffId { get; set; }
-        public string? StaffName { get; set; }
         public string Type { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public decimal DiscountApplied { get; set; }
@@ -90,7 +88,7 @@ namespace autoease_backend.Contracts.Customers
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public List<VehicleDto> Vehicles { get; set; } = new();
+        public List<CustomerVehicleDto> Vehicles { get; set; } = new();
     }
 
     public class CustomerDetailsDto
@@ -100,7 +98,7 @@ namespace autoease_backend.Contracts.Customers
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
-        public List<VehicleDto> Vehicles { get; set; } = new();
+        public List<CustomerVehicleDto> Vehicles { get; set; } = new();
         public List<AppointmentDto> Appointments { get; set; } = new();
         public List<InvoiceDto> Invoices { get; set; } = new();
         public List<VehicleUsageLogDto> VehicleUsageLogs { get; set; } = new();

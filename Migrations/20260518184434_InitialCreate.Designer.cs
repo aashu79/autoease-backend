@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using autoease_backend.Data;
@@ -11,9 +12,11 @@ using autoease_backend.Data;
 namespace autoease_backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260518184434_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,6 +216,9 @@ namespace autoease_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("StaffId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("numeric");
 
@@ -220,12 +226,14 @@ namespace autoease_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("VendorId")
+                    b.Property<int>("VendorId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("StaffId");
 
                     b.HasIndex("VendorId");
 
@@ -270,6 +278,20 @@ namespace autoease_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("RequestDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RequestedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RequesterId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("StockQuantity")
                         .HasColumnType("integer");
 
@@ -280,6 +302,8 @@ namespace autoease_backend.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RequesterId");
 
                     b.HasIndex("VendorId");
 
@@ -578,11 +602,21 @@ namespace autoease_backend.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("autoease_backend.Data.Models.User", "Staff")
+                        .WithMany("StaffInvoices")
+                        .HasForeignKey("StaffId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("autoease_backend.Data.Models.Vendor", "Vendor")
                         .WithMany("Invoices")
-                        .HasForeignKey("VendorId");
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Staff");
 
                     b.Navigation("Vendor");
                 });
@@ -608,11 +642,17 @@ namespace autoease_backend.Migrations
 
             modelBuilder.Entity("autoease_backend.Data.Models.Part", b =>
                 {
+                    b.HasOne("autoease_backend.Data.Models.User", "Requester")
+                        .WithMany("RequestedParts")
+                        .HasForeignKey("RequesterId");
+
                     b.HasOne("autoease_backend.Data.Models.Vendor", "Vendor")
                         .WithMany("Parts")
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Requester");
 
                     b.Navigation("Vendor");
                 });
@@ -687,9 +727,13 @@ namespace autoease_backend.Migrations
 
                     b.Navigation("PartRequests");
 
+                    b.Navigation("RequestedParts");
+
                     b.Navigation("Reviews");
 
                     b.Navigation("StaffAppointments");
+
+                    b.Navigation("StaffInvoices");
 
                     b.Navigation("VehicleUsageLogs");
 

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using autoease_backend.Data;
 using autoease_backend.Data.Models;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace autoease_backend.Controllers
 {
@@ -12,10 +14,12 @@ namespace autoease_backend.Controllers
     public class AdminController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public AdminController(AppDbContext context)
+        public AdminController(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpPost("create-staff")]
@@ -41,16 +45,23 @@ namespace autoease_backend.Controllers
 
             var staff = new User
             {
-                Name = request.Name,
+                UserName = request.Email,
                 Email = request.Email,
-                Password = HashPassword(request.Password),
-                Phone = request.Phone,
+                Name = request.Name,
+                PhoneNumber = request.Phone,
                 Role = "staff"
             };
 
-            _context.Users.Add(staff);
-            await _context.SaveChangesAsync();
+            var result = await _userManager.CreateAsync(staff, request.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
 
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(staff);
+            await _userManager.ConfirmEmailAsync(staff, token);
+
+            // Return created staff info
             return Ok(new
             {
                 message = "Staff created successfully.",
@@ -59,10 +70,35 @@ namespace autoease_backend.Controllers
                     staff.Id,
                     staff.Name,
                     staff.Email,
-                    staff.Phone,
+                    Phone = staff.PhoneNumber,
                     staff.Role
                 }
             });
+        }
+
+        [HttpGet("users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUsersByRole([FromQuery] string role)
+        {
+            if (string.IsNullOrWhiteSpace(role))
+            {
+                return BadRequest("Role is required.");
+            }
+
+            var normalizedRole = role.Trim().ToLower();
+            var users = await _context.Users
+                .Where(u => u.Role.ToLower() == normalizedRole)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    Phone = u.PhoneNumber,
+                    u.Role
+                })
+                .ToListAsync();
+
+            return Ok(users);
         }
 
         [HttpGet("staff-list")]
@@ -75,7 +111,7 @@ namespace autoease_backend.Controllers
                     u.Id,
                     u.Name,
                     u.Email,
-                    u.Phone,
+                    Phone = u.PhoneNumber,
                     u.Role
                 })
                 .ToListAsync();
@@ -110,7 +146,7 @@ namespace autoease_backend.Controllers
                     user.Id,
                     user.Name,
                     user.Email,
-                    user.Phone,
+                    Phone = user.PhoneNumber,
                     user.Role
                 }
             });
@@ -133,13 +169,7 @@ namespace autoease_backend.Controllers
             return Ok(new { message = "Staff deleted successfully." });
         }
 
-        private static string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hashBytes = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hashBytes);
-        }
+
     }
 
     public class CreateStaffRequest
